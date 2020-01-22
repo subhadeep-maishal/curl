@@ -200,9 +200,6 @@ static CURLcode global_init(long flags, bool memoryfuncs)
   }
 #endif
 
-  if(flags & CURL_GLOBAL_ACK_EINTR)
-    Curl_ack_eintr = 1;
-
   init_flags = flags;
 
   Curl_version_init();
@@ -517,7 +514,7 @@ static CURLcode wait_or_timeout(struct Curl_multi *multi, struct events *ev)
     before = Curl_now();
 
     /* wait for activity or timeout */
-    pollrc = Curl_poll(fds, numfds, (int)ev->ms);
+    pollrc = Curl_poll(fds, numfds, (int)ev->ms, TRUE);
 
     after = Curl_now();
 

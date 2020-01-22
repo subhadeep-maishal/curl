@@ -1793,6 +1793,7 @@ struct UserDefined {
   BIT(http09_allowed); /* allow HTTP/0.9 responses */
   BIT(mail_rcpt_allowfails); /* allow RCPT TO command to fail for some
                                 recipients */
+  BIT(ignore_eintr);
 };
 
 struct Names {

@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2019, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2020, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -96,7 +96,7 @@ void Curl_http_auth_cleanup_ntlm_wb(struct connectdata *conn)
       case 1:
         /* Give the process another moment to shut down cleanly before
            bringing down the axe */
-        Curl_wait_ms(1);
+        Curl_wait_ms(1, FALSE);
         break;
       case 2:
         kill(conn->ntlm_auth_hlpr_pid, SIGKILL);

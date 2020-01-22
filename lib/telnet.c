@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2019, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2020, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -1254,7 +1254,7 @@ static CURLcode send_telnet_data(struct connectdata *conn,
     struct pollfd pfd[1];
     pfd[0].fd = conn->sock[FIRSTSOCKET];
     pfd[0].events = POLLOUT;
-    switch(Curl_poll(pfd, 1, -1)) {
+    switch(Curl_poll(pfd, 1, -1, conn->data->set.ignore_eintr)) {
       case -1:                    /* error, abort writing */
       case 0:                     /* timeout (will never happen) */
         result = CURLE_SEND_ERROR;
@@ -1599,7 +1599,7 @@ static CURLcode telnet_do(struct connectdata *conn, bool *done)
   }
 
   while(keepon) {
-    switch(Curl_poll(pfd, poll_cnt, interval_ms)) {
+    switch(Curl_poll(pfd, poll_cnt, interval_ms, data->set.ignore_eintr)) {
     case -1:                    /* error, stop reading */
       keepon = FALSE;
       continue;

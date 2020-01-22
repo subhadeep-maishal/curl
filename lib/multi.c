@@ -1161,7 +1161,7 @@ static CURLMcode Curl_multi_wait(struct Curl_multi *multi,
   if(nfds) {
     int pollrc;
     /* wait... */
-    pollrc = Curl_poll(ufds, nfds, timeout_ms);
+    pollrc = Curl_poll(ufds, nfds, timeout_ms, TRUE);
 
     if(pollrc > 0) {
       retcode = pollrc;
@@ -1225,7 +1225,7 @@ static CURLMcode Curl_multi_wait(struct Curl_multi *multi,
          timeout */
       else if((sleep_ms < 0) && extrawait)
         sleep_ms = timeout_ms;
-      Curl_wait_ms((int)sleep_ms);
+      Curl_wait_ms((int)sleep_ms, FALSE);
     }
   }
 

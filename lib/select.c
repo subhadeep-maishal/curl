@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2019, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2020, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -53,8 +53,7 @@
 /* Convenience local macros */
 #define ELAPSED_MS() (int)Curl_timediff(Curl_now(), initial_tv)
 
-int Curl_ack_eintr = 0;
-#define ERROR_NOT_EINTR(error) (Curl_ack_eintr || error != EINTR)
+#define ERROR_NOT_EINTR(error) (!ignore_eintr || error != EINTR)
 
 /*
  * Internal function used for waiting a specific amount of ms
@@ -72,7 +71,7 @@ int Curl_ack_eintr = 0;
  *   -1 = system call error, invalid timeout value, or interrupted
  *    0 = specified timeout has elapsed
  */
-int Curl_wait_ms(int timeout_ms)
+int Curl_wait_ms(int timeout_ms, bool ignore_eintr)
 {
 #if !defined(MSDOS) && !defined(USE_WINSOCK)
 #ifndef HAVE_POLL_FINE
@@ -145,7 +144,8 @@ int Curl_wait_ms(int timeout_ms)
 int Curl_socket_check(curl_socket_t readfd0, /* two sockets to read from */
                       curl_socket_t readfd1,
                       curl_socket_t writefd, /* socket to write to */
-                      time_t timeout_ms)     /* milliseconds to wait */
+                      time_t timeout_ms,     /* milliseconds to wait */
+                      bool ignore_eintr)
 {
 #ifdef HAVE_POLL_FINE
   struct pollfd pfd[3];
@@ -172,7 +172,7 @@ int Curl_socket_check(curl_socket_t readfd0, /* two sockets to read from */
   if((readfd0 == CURL_SOCKET_BAD) && (readfd1 == CURL_SOCKET_BAD) &&
      (writefd == CURL_SOCKET_BAD)) {
     /* no sockets, just wait */
-    r = Curl_wait_ms((int)timeout_ms);
+    r = Curl_wait_ms((int)timeout_ms, ignore_eintr);
     return r;
   }
 
@@ -389,7 +389,8 @@ int Curl_socket_check(curl_socket_t readfd0, /* two sockets to read from */
  *    0 = timeout
  *    N = number of structures with non zero revent fields
  */
-int Curl_poll(struct pollfd ufds[], unsigned int nfds, int timeout_ms)
+int Curl_poll(struct pollfd ufds[], unsigned int nfds, int timeout_ms,
+              bool ignore_eintr)
 {
 #ifndef HAVE_POLL_FINE
   struct timeval pending_tv;
@@ -414,7 +415,7 @@ int Curl_poll(struct pollfd ufds[], unsigned int nfds, int timeout_ms)
     }
   }
   if(fds_none) {
-    r = Curl_wait_ms(timeout_ms);
+    r = Curl_wait_ms(timeout_ms, ignore_eintr);
     return r;
   }
 

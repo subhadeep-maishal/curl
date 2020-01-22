@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2019, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2020, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -1224,7 +1224,8 @@ CURLcode Curl_readwrite(struct connectdata *conn,
 
   if(!select_res) /* Call for select()/poll() only, if read/write/error
                      status is not known. */
-    select_res = Curl_socket_check(fd_read, CURL_SOCKET_BAD, fd_write, 0);
+    select_res = Curl_socket_check(fd_read, CURL_SOCKET_BAD, fd_write, 0,
+                                   data->set.ignore_eintr);
 
   if(select_res == CURL_CSELECT_ERR) {
     failf(data, "select/poll returned error");

@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2019, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2020, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -514,7 +514,7 @@ static CURLcode Curl_ossl_seed(struct Curl_easy *data)
     size_t i, i_max;
     for(i = 0, i_max = len / sizeof(struct curltime); i < i_max; ++i) {
       struct curltime tv = Curl_now();
-      Curl_wait_ms(1);
+      Curl_wait_ms(1, data->set.ignore_eintr);
       tv.tv_sec *= i + 1;
       tv.tv_usec *= (unsigned int)i + 2;
       tv.tv_sec ^= ((Curl_now().tv_sec + Curl_now().tv_usec) *
@@ -3724,7 +3724,8 @@ static CURLcode ossl_connect_common(struct connectdata *conn,
         connssl->connecting_state?sockfd:CURL_SOCKET_BAD;
 
       what = Curl_socket_check(readfd, CURL_SOCKET_BAD, writefd,
-                               nonblocking?0:(time_t)timeout_ms);
+                               nonblocking?0:(time_t)timeout_ms,
+                               data->set.ignore_eintr);
       if(what < 0) {
         /* fatal error */
         failf(data, "select/poll on SSL socket, errno: %d", SOCKERRNO);

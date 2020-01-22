@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2019, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2020, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -402,7 +402,8 @@ static CURLcode ReceivedServerConnect(struct connectdata *conn, bool *received)
     return CURLE_FTP_ACCEPT_FAILED;
   }
 
-  result = Curl_socket_check(ctrl_sock, data_sock, CURL_SOCKET_BAD, 0);
+  result = Curl_socket_check(ctrl_sock, data_sock, CURL_SOCKET_BAD, 0,
+                             data->set.ignore_eintr);
 
   /* see if the connection request is already here */
   switch(result) {

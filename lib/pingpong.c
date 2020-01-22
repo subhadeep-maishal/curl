@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2019, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2020, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -113,7 +113,8 @@ CURLcode Curl_pp_statemach(struct pingpong *pp, bool block,
     rc = Curl_socket_check(pp->sendleft?CURL_SOCKET_BAD:sock, /* reading */
                            CURL_SOCKET_BAD,
                            pp->sendleft?sock:CURL_SOCKET_BAD, /* writing */
-                           interval_ms);
+                           interval_ms,
+                           data->set.ignore_eintr);
 
   if(block) {
     /* if we didn't wait, we don't have to spend time on this now */
