@@ -2987,7 +2987,7 @@ static CURLcode ssh_block_statemach(struct connectdata *conn,
       /* wait for the socket to become ready */
       (void)Curl_socket_check(fd_read, CURL_SOCKET_BAD, fd_write,
                               left>1000?1000:(time_t)left,
-                              data->set.ack_eintr);
+                              data->set.ignore_eintr);
     }
 #endif
 

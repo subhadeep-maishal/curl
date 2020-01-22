@@ -316,7 +316,7 @@ static int waitperform(struct connectdata *conn, int timeout_ms)
   }
 
   if(num)
-    nfds = Curl_poll(pfd, num, timeout_ms, data->set.ack_eintr);
+    nfds = Curl_poll(pfd, num, timeout_ms, data->set.ignore_eintr);
   else
     nfds = 0;
 
